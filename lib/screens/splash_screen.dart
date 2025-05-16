@@ -49,11 +49,9 @@ class SplashScreenState extends State<SplashScreen> with AfterLayoutMixin<Splash
     final Location? lastSavedLocation = localDataProvider.lastSavedLocation;
 
     if (currentLocation != null && lastSavedLocation == null) {
-      await locationProvider.updateLocationOnMap(currentLocation.latitude!, currentLocation.longitude!);
     } else if (currentLocation != null && lastSavedLocation != null) {
       final distanceInKm = currentLocation.distanceTo(lastSavedLocation);
       if (distanceInKm > 10) {
-        await locationProvider.updateLocationOnMap(currentLocation.latitude!, currentLocation.longitude!);
         localDataProvider.updateLastSavedLocation(currentLocation);
       }
     }

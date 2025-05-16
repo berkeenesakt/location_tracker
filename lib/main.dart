@@ -1,8 +1,12 @@
 import 'package:flutter_timezone/flutter_timezone.dart';
-import 'screens/splash_screen.dart';
+import 'package:hive_flutter/hive_flutter.dart';
+import 'models/daily_summary.dart';
+import 'models/geo_fence.dart';
+import 'models/location.dart';
 import 'providers/location_provider.dart';
 import 'providers/local_data_provider.dart';
 import 'providers/home_provider.dart';
+import 'providers/app_lifecycle_manager.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/material.dart';
@@ -10,6 +14,7 @@ import 'gen/fonts.gen.dart';
 import 'gen/colors.gen.dart';
 import 'package:timezone/data/latest_all.dart' as tz;
 import 'package:timezone/timezone.dart' as tz;
+import 'screens/splash_screen.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -17,6 +22,13 @@ void main() async {
 }
 
 Future<void> initializeDependencies() async {
+  // Initialize Hive
+  await Hive.initFlutter();
+
+  // Register Hive adapters
+  Hive.registerAdapter(LocationAdapter());
+  Hive.registerAdapter(DailySummaryAdapter());
+  Hive.registerAdapter(GeoFenceAdapter());
   updateLocalTimeZone();
 }
 
@@ -26,10 +38,31 @@ Future<void> updateLocalTimeZone() async {
   tz.setLocalLocation(tz.getLocation(timeZoneName!));
 }
 
-class MyApp extends StatelessWidget {
+class MyApp extends StatefulWidget {
   final GlobalKey<NavigatorState> navigatorKey = GlobalKey();
 
   MyApp({super.key});
+
+  @override
+  State<MyApp> createState() => _MyAppState();
+}
+
+class _MyAppState extends State<MyApp> {
+  late AppLifecycleManager _lifecycleManager;
+  late LocationProvider _locationProvider;
+
+  @override
+  void initState() {
+    super.initState();
+    _locationProvider = LocationProvider();
+    _lifecycleManager = AppLifecycleManager(_locationProvider);
+  }
+
+  @override
+  void dispose() {
+    _lifecycleManager.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -45,11 +78,11 @@ class MyApp extends StatelessWidget {
       providers: [
         ChangeNotifierProvider<HomeProvider>(create: (_) => HomeProvider()),
         ChangeNotifierProvider<LocalDataProvider>(create: (_) => LocalDataProvider()),
-        ChangeNotifierProvider<LocationProvider>(create: (_) => LocationProvider()),
+        ChangeNotifierProvider<LocationProvider>.value(value: _locationProvider),
       ],
       child: MaterialApp(
         title: 'Example project',
-        navigatorKey: navigatorKey,
+        navigatorKey: widget.navigatorKey,
         debugShowCheckedModeBanner: false,
         scrollBehavior: ScrollConfiguration.of(context).copyWith(scrollbars: false),
         theme: ThemeData(
