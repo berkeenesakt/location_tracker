@@ -74,6 +74,6 @@ Location App Implementation Tasks (iOS):
     ☐ Perform code review
     ☐ Test on iOS device
     ☐ Optimize performance
-    ☐ Clean up code (remove redundant files and dead code)
+    ✔ Clean up code (remove redundant files and dead code) @done(25-05-16 12:16)
     ☐ Prepare for submission
     
