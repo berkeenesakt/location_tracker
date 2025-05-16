@@ -55,9 +55,7 @@ class LocationProvider with ChangeNotifier {
     }
   }
 
-  Future<void> updateLocationOnMap(double lat, double lng) async {
-    //TODO update my location on the server
-  }
+  Future<void> updateLocationOnMap(double lat, double lng) async {}
 
   Future<Location?> _getUserLocation() async {
     final locationPlaceMark = await _getLocationPlaceMark();
