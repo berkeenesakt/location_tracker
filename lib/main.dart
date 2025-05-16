@@ -1,19 +1,11 @@
-import 'dart:ui';
-import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:flutter_timezone/flutter_timezone.dart';
 import 'screens/splash_screen.dart';
 import 'providers/location_provider.dart';
 import 'providers/local_data_provider.dart';
 import 'providers/home_provider.dart';
-import 'providers/auth_provider.dart' as auth;
-import 'providers/analytics_provider.dart';
 import 'package:provider/provider.dart';
-import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/material.dart';
-import 'package:firebase_core/firebase_core.dart';
-import 'package:firebase_auth/firebase_auth.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'gen/fonts.gen.dart';
 import 'gen/colors.gen.dart';
 import 'package:timezone/data/latest_all.dart' as tz;
@@ -21,18 +13,11 @@ import 'package:timezone/timezone.dart' as tz;
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await dotenv.load(fileName: 'config.env');
   initializeDependencies().then((_) => runApp(MyApp()));
 }
 
 Future<void> initializeDependencies() async {
-  await Firebase.initializeApp();
   updateLocalTimeZone();
-  FlutterError.onError = (errorDetails) => FirebaseCrashlytics.instance.recordFlutterFatalError(errorDetails);
-  PlatformDispatcher.instance.onError = (error, stack) {
-    FirebaseCrashlytics.instance.recordError(error, stack, fatal: true);
-    return true;
-  };
 }
 
 Future<void> updateLocalTimeZone() async {
@@ -43,8 +28,6 @@ Future<void> updateLocalTimeZone() async {
 
 class MyApp extends StatelessWidget {
   final GlobalKey<NavigatorState> navigatorKey = GlobalKey();
-  final FirebaseAuth _auth = FirebaseAuth.instance;
-  final FirebaseFirestore _storage = FirebaseFirestore.instance;
 
   MyApp({super.key});
 
@@ -60,11 +43,9 @@ class MyApp extends StatelessWidget {
 
     return MultiProvider(
       providers: [
-        Provider<AnalyticsProvider>(create: (_) => AnalyticsProvider()),
         ChangeNotifierProvider<HomeProvider>(create: (_) => HomeProvider()),
         ChangeNotifierProvider<LocalDataProvider>(create: (_) => LocalDataProvider()),
         ChangeNotifierProvider<LocationProvider>(create: (_) => LocationProvider()),
-        ChangeNotifierProvider<auth.AuthProvider>(create: (_) => auth.AuthProvider(_auth, _storage)),
       ],
       child: MaterialApp(
         title: 'Example project',

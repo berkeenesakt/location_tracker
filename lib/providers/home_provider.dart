@@ -1,36 +1,33 @@
 import 'package:flutter/widgets.dart';
 import 'package:flutter/material.dart';
-import '../screens/logged_in/home_tabs/main_screen.dart';
-import '../screens/logged_in/home_tabs/second_screen.dart';
-import 'analytics_provider.dart';
+import '../screens/home_screen.dart';
+import '../screens/summary_screen.dart';
 
 enum AppScreen {
-  MAIN,
-  SECOND,
+  HOME,
+  SUMMARY,
 }
 
 class HomeProvider with ChangeNotifier {
   final _screens = [
-    const MainScreen(),
-    const SecondScreen(),
+    const HomeScreen(),
+    const SummaryScreen(),
   ];
 
   int _currentIndex = 0;
 
   Future<void> switchToIndex(int index) async {
     _currentIndex = index;
-    AnalyticsProvider.setCurrentScreen(AppScreen.values.elementAt(index).name);
     notifyListeners();
   }
 
   Future<void> switchToScreen(AppScreen screen) async {
     _currentIndex = AppScreen.values.indexOf(screen);
-    AnalyticsProvider.setCurrentScreen(screen.name);
     notifyListeners();
   }
 
   void reset() {
-    _currentIndex = AppScreen.MAIN.index;
+    _currentIndex = AppScreen.HOME.index;
     notifyListeners();
   }
 

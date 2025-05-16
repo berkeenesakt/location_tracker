@@ -1,9 +1,6 @@
-import 'package:cloud_functions/cloud_functions.dart';
-import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:location/location.dart' as loc;
 import 'package:geocoding/geocoding.dart' as geocoding;
 import 'package:flutter/foundation.dart';
-import '../util/notifications_helper.dart';
 import '../models/location.dart';
 
 class LocationProvider with ChangeNotifier {
@@ -39,7 +36,6 @@ class LocationProvider with ChangeNotifier {
     if (permissionGranted == loc.PermissionStatus.denied) {
       permissionGranted = await location.requestPermission();
       if (permissionGranted != loc.PermissionStatus.granted) {
-        NotificationsHelper().showError('Location permission denied. Please enable location services.');
         return false;
       }
     }
@@ -55,7 +51,7 @@ class LocationProvider with ChangeNotifier {
       _currentLocationData = await location.getLocation().timeout(const Duration(seconds: 6));
       _currentLocation = await _getUserLocation();
     } catch (e) {
-      NotificationsHelper().printIfDebugMode('Location fetching failed: $e');
+      print('Location fetching failed: $e');
     }
   }
 
