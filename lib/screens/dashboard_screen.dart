@@ -3,7 +3,6 @@ import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import '../../animations/fade_animation.dart';
 import '../../components/glass_container.dart';
-import '../../gen/assets.gen.dart';
 import '../../providers/home_provider.dart';
 
 class Dashboard extends StatefulWidget {
@@ -18,8 +17,8 @@ class Dashboard extends StatefulWidget {
 }
 
 class _DashboardState extends State<Dashboard> {
-  late final activeIconColor = const ColorFilter.mode(Colors.white, BlendMode.srcIn);
-  late final iconColor = const ColorFilter.mode(Colors.white54, BlendMode.srcIn);
+  late final activeIconColor = Colors.white;
+  late final iconColor = Colors.white54;
 
   @override
   Widget build(BuildContext context) {
@@ -57,14 +56,14 @@ class _DashboardState extends State<Dashboard> {
                   onTap: homeProvider.switchToIndex,
                   items: [
                     BottomNavigationBarItem(
-                      icon: Assets.images.home.svg(colorFilter: iconColor),
-                      activeIcon: GlowingIcon(child: Assets.images.homeFilled.svg(colorFilter: activeIconColor)),
+                      icon: Icon(Icons.home, color: iconColor, size: 24),
+                      activeIcon: GlowingIcon(child: Icon(Icons.home, color: activeIconColor, size: 24)),
                       label: 'Main',
                     ),
                     BottomNavigationBarItem(
-                      icon: Assets.images.book.svg(colorFilter: iconColor),
-                      activeIcon: GlowingIcon(child: Assets.images.bookFilled.svg(colorFilter: activeIconColor)),
-                      label: 'Second',
+                      icon: Icon(Icons.analytics, color: iconColor, size: 24),
+                      activeIcon: GlowingIcon(child: Icon(Icons.analytics, color: activeIconColor, size: 24)),
+                      label: 'Summary',
                     ),
                   ],
                 ),
